@@ -1,0 +1,25 @@
+#Problem Statement No. 11
+#1. Use the dataset 'titanic'. Plot a box plot for distribution of age with respect to each gender along with the information 
+#about whether they survived or not. (Column names : 'sex' and 'age') 
+#2. Write observations on the inference from the above statistics. Use violin plot and others plots from seaborn package 
+#Use :Titanic.csv 
+
+
+import pandas as pd
+
+df = pd.read_csv("Datasets/titanic.csv")
+df.isnull().sum()
+df.drop(["Cabin"], axis=1, inplace=True)
+age_avg = int(df["Age"].mean())
+df["Age"] = df["Age"].apply(lambda x: age_avg if pd.isnull(x) else x)
+df.isnull().sum()
+
+df.dropna(inplace=True,ignore_index=True)
+
+
+
+import seaborn as sns
+sns.boxplot(data=df, x="Age", y="Sex")
+sns.boxplot(data=df, x="Age", y="Sex", hue="Survived")
+sns.violinplot(data=df, x="Sex", y="Age", hue="Survived")
+sns.swarmplot(data=df, x="Sex", y="Age", hue="Survived")

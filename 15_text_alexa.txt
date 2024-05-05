@@ -1,0 +1,68 @@
+#1 Plot a graph of Positive and Negative Feedback (1 = Positive Feedback, 0 = Negative Feedback)
+#2 Convert the review text into lowercase.
+#3 Remove all punctuations from review text.
+#4 Remove emoticons and emojis from the text
+#5 Tokenize the review text into words.
+#6 Remove the Stopwords from the tokenized text.
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("Datasets/Alexa-Dataset.csv")
+
+df.dtypes
+
+df["feedback"].value_counts().plot(kind="bar")
+plt.title("")
+plt.show()
+
+#Convert the review text into lowercase.
+df["verified_reviews"] = df["verified_reviews"].str.lower()
+df
+
+import string
+punc = string.punctuation
+def remove_punc(text):
+    ret = ''
+    for i in text:
+        if i not in punc:
+            ret += i
+    return ret
+
+remove_punc("text..112~!@")
+
+df["verified_reviews"] = df["verified_reviews"].apply(lambda x: remove_punc(str(x)))
+
+df.dtypes
+
+# Remove emoticons and emojis from the text
+import re
+
+# Remove emoticons and emojis from the text
+def remove_emoji(text):
+    emoji_pattern = re.compile("["
+                               u"\U0001F600-\U0001F64F"  # emoticons
+                               u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                               u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                               u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                               "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
+
+remove_emoji("😄 EmojiDrive — All Emoji Copy and Paste ️📋 Global web icon💯 Top 100 Emojis 👍 💻 🇺🇸 😭 😈")
+
+df['verified_reviews'] = df['verified_reviews'].apply(lambda x: remove_emoji(str(x)))
+
+
+
+#Tokenize the review text into words.
+from nltk.tokenize import word_tokenize
+# Tokenize the review text into words
+df['verified_reviews'] = df['verified_reviews'].apply(word_tokenize)
+
+#Remove the Stopwords from the tokenized text.
+from nltk.corpus import stopwords
+stop_words = set(stopwords.words("english"))
+
+df["verified_reviews"] = df["verified_reviews"].apply(lambda x: [word for word in x if word not in stop_words])
+
+

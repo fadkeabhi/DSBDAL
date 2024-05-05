@@ -1,0 +1,102 @@
+#Problem Statement No. 04
+#Consider the Bangalore House Price Data. Perform following operations.
+#a) Find and replace null values in the data using appropriate technique.
+#b) Transform the ‘Size’ column to numerical values. For Example: 2 BHK to be converted as 2
+#c) Transform the ‘total_sqft’ column to contain numerical values on same scale. If the range is given average value of 
+#the range to be taken.
+#d) Calculate and add one more column as ‘Price_Per_Sqft’
+#e) Remove the outliers from Price_Per_Sqft and BHK Size column if any.
+#f) Apply the Linear Regression model to the data and display the training and testing performance measures as Mean 
+#Squared Error and Accuracy
+
+
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("Datasets/Banglore Housing Prices.csv")
+
+df.isnull().sum()
+
+df["bath"] = df["bath"].apply(lambda x: df["bath"].mean() if pd.isnull(x) else x)
+df.dropna(inplace=True)
+df.isnull().sum()
+
+#b Transform the ‘Size’ column to numerical values. For Example: 2 BHK to be converted as 2
+df["size"] = df["size"].apply(lambda x: int(x.split()[0]))
+df["size"] = df["size"].astype("int")
+
+#c
+for i in df["total_sqft"]:
+    if len(i.split()) >1 and len(i.split()) != 3:
+        print(i.split())
+for i in df["total_sqft"]:
+    if len(i.split()) == 2 and i.split()[1] == "Yards":
+        print(i.split())
+
+
+def stringFilter(num):
+    ret = ''.join(filter(str.isdigit, num))
+    return ret
+stringFilter("asd1dfg1")
+
+# sq yards to sq foot
+# 1 sq yard = 9 sq foot
+df["total_sqft"] = df["total_sqft"].apply(lambda x: stringFilter(x.split()[0])*9 if len(x.split())==2 and x.split()[1] == 'Yards' else x)
+
+for i in df["total_sqft"]:
+    if len(i.split()) == 2 and i.split()[1] == "Meter":
+        print(i.split())
+
+# sq meter to sq foot
+# 1 sq meter = 10.7639104 sq foot
+df["total_sqft"] = df["total_sqft"].apply(lambda x: stringFilter(x.split()[0])*10.76 if len(x.split()) == 2 and x.split()[1] == "Meter" else x)
+
+for i in df["total_sqft"]:
+    if len(i.split()) == 3:
+        print(i.split())
+#taking average for range
+df["total_sqft"] = df["total_sqft"].apply(lambda x: str((float(x.split()[0]) + float(x.split()[2])) / 2 ) if len(x.split()) == 3 else x)
+
+df["total_sqft"] = df["total_sqft"].apply(lambda x: stringFilter(x))
+df["total_sqft"] = df["total_sqft"].astype("float")
+df["total_sqft"] = df["total_sqft"].apply(lambda x: round(x,2))
+
+
+
+#d
+df["Price_Per_Sqft"] = df["total_sqft"]/df["price"]
+
+#e
+import matplotlib.pyplot as plt
+plt.boxplot(df.total_sqft)
+new = df[df["total_sqft"] < 100000000]
+plt.boxplot(new.total_sqft)
+plt.boxplot(new["size"])
+new = new[new["size"] < 11]
+plt.boxplot(new["size"])
+
+
+#f
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Define features and target variable
+X = new[['size', 'total_sqft','bath']]
+y = new['Price_Per_Sqft']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.9, random_state=4)
+
+# Create and train the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Calculate performance measures
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f'Mean Squared Error: {mse}')
+print(f'Accuracy (R-squared): {r2}')

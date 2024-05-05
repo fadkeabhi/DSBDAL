@@ -1,0 +1,48 @@
+#Problem Statement No. 09
+#1. Implement Simple Naïve Bayes classification algorithm using Python/R on iris.csv dataset. 
+##2. Compute Confusion matrix to find TP, FP, TN, FN, Accuracy, Error rate, Precision, Recall on the given dataset 
+#Use iris.csv Diabetes.csv
+
+
+import pandas as pd
+df = pd.read_csv("Datasets/Iris.csv")
+
+
+# Split the dataset into features and target
+X = df.drop('Species', axis=1)
+y = df['Species']\
+
+from sklearn.model_selection import train_test_split
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+from sklearn.naive_bayes import GaussianNB
+
+# Initialize the Naïve Bayes classifier
+nb = GaussianNB()
+
+# Train the model
+nb.fit(X_train, y_train)
+
+# Make predictions
+y_pred = nb.predict(X_test)
+
+from sklearn.metrics import confusion_matrix, classification_report
+
+# Compute the confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:")
+print(cm)
+
+
+# Compute other metrics
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.heatmap(cm, annot=True, cmap='coolwarm')
+plt.title("Confusion Matrix")
+plt.show()

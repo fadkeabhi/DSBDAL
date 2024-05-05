@@ -1,0 +1,31 @@
+#Problem Statement No. 10
+#1. Use the dataset 'titanic'. Use the Seaborn library to see if we can find any patterns in the data. 
+#2. Write a code to check how the price of the ticket (column name: 'fare') for each passenger is distributed by plotting a 
+#histogram.
+
+import pandas as pd
+df = pd.read_csv("Datasets/titanic.csv")
+df.isnull().sum()
+df.drop(["Cabin"], axis=1, inplace=True)
+
+age_mean = int(df["Age"].mean())
+df["Age"] = df["Age"].apply(lambda x: age_mean if pd.isnull(x) else x)
+
+df.isnull().sum()
+
+df.dropna().reindex()
+
+df.columns
+
+data = df[['Survived', 'Pclass', 'Sex', 'Age', 'SibSp','Parch', 'Fare', 'Embarked']]
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.pairplot(data, hue="Survived")
+plt.title("Pair Plots")
+plt.show()
+
+sns.histplot(df["Fare"])
+plt.title("Fare Distribution")
+plt.show()

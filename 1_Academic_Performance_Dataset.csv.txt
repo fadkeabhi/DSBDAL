@@ -1,0 +1,43 @@
+#Problem Statement No. 01
+#Consider the “Academic performance” dataset of students (Academic_Performance_Dataset.csv) and perform the 
+#following operations using Python.
+#a) Scan all variables for missing values and inconsistencies. If there are missing values and/or inconsistencies, use any 
+#of the suitable techniques to deal with them.
+#b) Scan all numeric variables for outliers. If there are outliers, use any of the suitable techniques to deal with them.
+#c) Apply data transformations on categorical variables to convert it into numerical variables.
+#Reason and document your approach properly.
+
+import pandas as pd
+df = pd.read_csv("Datasets/Academic_Performance.csv")
+df
+
+#a
+df.isnull().sum()
+df.dropna(axis=0, inplace=True)
+df.isnull().sum()
+
+#b
+df.describe()
+(df["COURSE 1 MARKS"] < 0).sum()
+df["COURSE 1 MARKS"] = df["COURSE 1 MARKS"].apply(lambda x: 0 if x<0 else x)
+(df["COURSE 3 MARKS"] > 100).sum()
+df["COURSE 3 MARKS"] = df["COURSE 3 MARKS"].apply(lambda x: 100 if x>100 else x)
+(df["COURSE 4 MARKS"] > 100).sum()
+df["COURSE 4 MARKS"] = df["COURSE 4 MARKS"].apply(lambda x: 100 if x>100 else x)
+df.describe()
+
+
+cols = df.columns
+
+for i in cols:
+    print(i)
+    print(df[i].unique())
+
+df = pd.get_dummies(data=df, columns=["GENDER"])
+df = pd.get_dummies(data=df, columns=["OVEARLL_GRADE"])
+
+#c
+from sklearn import preprocessing
+lable_encoder = preprocessing.LabelEncoder()
+df["ACADEMIC_PROGRAM"] = lable_encoder.fit_transform(df["ACADEMIC_PROGRAM"])
+df = pd.get_dummies(data = df, columns=["EDUCATION_TYPE"])

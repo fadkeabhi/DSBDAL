@@ -1,0 +1,56 @@
+#Problem Statement No. 02
+#Perform the following operations on Age-Income dataset (Age-Income-Dataset.csv)
+#Provide summary statistics (mean, median, minimum, maximum, standard deviation) for numeric variables with and 
+#without using any library functions.
+#Provide summary statistics of income grouped by the age groups. Create a list that contains a numeric value for each 
+#response to the categorical variable.
+
+import pandas as pd
+df = pd.read_excel("Datasets/Age-Income-Dataset.xlsx")
+df.head()
+
+sum = 0
+count = 0
+for i in df["Income"]:
+    sum += i
+    count += 1
+mean = sum/count
+mean
+
+sorted_data = sorted(df["Income"])
+if(count%2==0):
+    #even
+    median = (sorted_data[(count//2)-1] + sorted_data[(count//2)]) / 2
+else:
+    median = sorted_data[(count//2)-1]
+median
+
+min = df["Income"][0]
+for i in df["Income"]:
+    if i < min:
+        min = i
+min
+
+max = df["Income"][0]
+for i in df["Income"]:
+    if i > max:
+        max = i
+
+max
+
+std_dev_sum = 0
+for i in df["Income"]:
+    std_dev_sum += (i-mean)*(i-mean)
+std_dev = (std_dev_sum/(count-1))**0.5
+std_dev
+
+
+
+df["Income"].mean()
+df["Income"].median()
+df["Income"].min()
+df["Income"].max()
+df["Income"].std()
+
+
+df.groupby("Age").describe()

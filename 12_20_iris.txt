@@ -1,0 +1,41 @@
+#Problem Statement No. 12
+#Scan the Iris dataset and give the inference as: 
+#1. List down the features and their types (e.g., numeric, nominal) available in the dataset.
+#2. Create a histogram for each feature in the dataset to illustrate the feature distributions. 
+#3. Create a boxplot for each feature in the dataset. 
+#4. Compare distributions and identify outliers.
+
+
+import pandas as pd
+df = pd.read_csv("Datasets/Iris.csv")
+df.isnull().sum()
+df.dtypes
+df.columns
+numerical_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+for i in numerical_cols:
+    sns.histplot(df[i])
+    plt.title(f"Histogram of {i} in cm")
+    plt.show()
+
+#Same as above but in grid
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(15, 10))
+for i, col in enumerate(numerical_cols):
+    sns.histplot(df[col], ax=axes[i//2, i%2])
+    axes[i//2, i%2].set_title(f"Histogram of {col} in cm")
+    axes[i//2, i%2].set_ylabel("Frequency")
+
+plt.tight_layout()
+plt.show()
+
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(15,10))
+for i, col in enumerate(numerical_cols):
+    sns.boxplot(df[col], ax=axes[i//2, i%2])
+    axes[i//2, i%2].set_title(f"Box Plot of {col}")
+    
+plt.show()

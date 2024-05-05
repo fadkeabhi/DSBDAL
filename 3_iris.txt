@@ -1,0 +1,52 @@
+#Problem Statement No. 03
+#Write a Python program to display some basic statistical details like percentile, mean, standard deviation etc. of the 
+#species of ‘Iris-setosa’, ‘Iris-versicolor’ and ‘Iris-virginica’ of iris.csv dataset.
+#Calculate the measures of variability. Calculate and provide the visualization of the Correlation among the variables.
+
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('Datasets/Iris.csv')
+
+# Filter data for each species
+setosa_data = df[df['Species'] == 'Iris-setosa']
+versicolor_data = df[df['Species'] == 'Iris-versicolor']
+virginica_data = df[df['Species'] == 'Iris-virginica']
+
+
+# Display basic statistical details
+print("Basic Statistical Details for Iris-setosa:")
+print(setosa_data.describe())
+
+print("\nBasic Statistical Details for Iris-versicolor:")
+print(versicolor_data.describe())
+
+print("\nBasic Statistical Details for Iris-virginica:")
+print(virginica_data.describe())
+
+df.columns
+
+numerical_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
+
+# Calculate measures of variability
+setosa_variability = setosa_data[numerical_cols].var()
+versicolor_variability = versicolor_data[numerical_cols].var()
+virginica_variability = virginica_data[numerical_cols].var()
+
+print("\nMeasures of Variability for Iris-setosa:")
+print(setosa_variability)
+
+print("\nMeasures of Variability for Iris-versicolor:")
+print(versicolor_variability)
+
+print("\nMeasures of Variability for Iris-virginica:")
+print(virginica_variability)
+
+
+# Calculate and visualize the correlation among variables
+correlation_matrix = df[numerical_cols].corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+plt.title('Correlation Matrix of Iris Dataset')
+plt.show()
